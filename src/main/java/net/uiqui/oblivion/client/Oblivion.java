@@ -24,6 +24,7 @@ import java.util.List;
 
 import net.uiqui.oblivion.client.api.APIClient;
 import net.uiqui.oblivion.client.api.error.CacheException;
+import net.uiqui.oblivion.client.impl.JSONCacheContext;
 
 public class Oblivion {
 	private APIClient apiClient = null;
@@ -32,12 +33,12 @@ public class Oblivion {
 		this.apiClient = new APIClient(builder.server, builder.port);
 	}
 	
-	public CacheContext newCacheContext(final String cache) {
-		return newCacheContext(cache, null);
+	public CacheContext<String> newCacheContext(final String cache) {
+		return new JSONCacheContext(cache, apiClient);
 	}
 	
-	public CacheContext newCacheContext(final String cache, final Class<?> clazz) {
-		return new CacheContext(cache, apiClient, clazz);
+	public <X> CacheContext<X> newCacheContext(final String cache, final Class<X> clazz) {
+		return new CacheContext<X>(cache, apiClient, clazz);
 	}
 	
 	public List<String> caches() throws IOException, CacheException {

@@ -163,13 +163,13 @@ public class APIClient {
 		}
 	}
 
-	public Value get(final String cache, final String key) throws IOException, CacheException {
+	public GetResponse get(final String cache, final String key) throws IOException, CacheException {
 		final String keyEncoded = KeyEncoder.encode(key);
 		final String url = GET_KEY_VALUE.build(server, port, cache, keyEncoded);
 		final RestOutput output = client.get(url);
 
 		if (output.getStatus() == 200) {
-			return new Value(output.getJson(), output.getEtag().longValue());
+			return new GetResponse(output.getJson(), output.getEtag().longValue());
 		} else if (output.getStatus() == 404) {
 			return null;
 		} else {

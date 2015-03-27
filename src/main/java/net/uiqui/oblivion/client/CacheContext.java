@@ -25,16 +25,16 @@ import java.util.List;
 import com.google.gson.Gson;
 
 import net.uiqui.oblivion.client.api.APIClient;
-import net.uiqui.oblivion.client.api.Value;
+import net.uiqui.oblivion.client.api.GetResponse;
 import net.uiqui.oblivion.client.api.error.CacheException;
 
-public class CacheContext {
+public class CacheContext<T> {
 	private final Gson gson = new Gson();
 	private String cache = null;
 	private APIClient apiClient = null;
-	private Class<?> defaultClass = null;
+	private Class<T> defaultClass = null;
 	
-	protected CacheContext(final String cache, final APIClient apiClient, final Class<?> clazz) {
+	protected CacheContext(final String cache, final APIClient apiClient, final Class<T> clazz) {
 		this.cache = cache;
 		this.apiClient = apiClient;
 		this.defaultClass = clazz;
@@ -43,47 +43,39 @@ public class CacheContext {
 	public long version(final Object key) throws IOException, CacheException {
 		final String keyStr = key.toString();
 		return apiClient.version(cache, keyStr);
-	}	
+	}		
 	
-	public Object get(final Object key) throws IOException, CacheException {
-		return get(key, null);
-	}	
-	
-	public Object get(final Object key, final Class<?> clazz) throws IOException, CacheException {
+	public T get(final Object key) throws IOException, CacheException {
 		final String keyStr = key.toString();
-		final Value value = apiClient.get(cache, keyStr);
+		final GetResponse value = apiClient.get(cache, keyStr);
 		
 		if (value == null) {
 			return null;
 		}
 		
-		return output(value.getContent(), clazz);
+		return fromJson(value.getContent());
 	}	
 	
-	public GetResponse getValueAndVersion(final Object key) throws IOException, CacheException {
-		return getValueAndVersion(key, null);
-	}	
-	
-	public GetResponse getValueAndVersion(final Object key, final Class<?> clazz) throws IOException, CacheException {
+	public Value<T> getValueAndVersion(final Object key) throws IOException, CacheException {
 		final String keyStr = key.toString();
-		final Value value = apiClient.get(cache, keyStr);
+		final GetResponse value = apiClient.get(cache, keyStr);
 		
 		if (value == null) {
 			return null;
 		}
 		
-		return new GetResponse(output(value.getContent(), clazz), value.getVersion());
+		return new Value<T>(fromJson(value.getContent()), value.getVersion());
 	}	
 	
-	public long put(final Object key, final Object value) throws IOException, CacheException {
+	public long put(final Object key, final T value) throws IOException, CacheException {
 		final String keyStr = key.toString();
-		final String json = gson.toJson(value);
+		final String json = toJson(value);
 		return apiClient.put(cache, keyStr, json);
 	}	
 	
-	public long put(final Object key, final Object value, long version) throws IOException, CacheException {
+	public long put(final Object key, final T value, long version) throws IOException, CacheException {
 		final String keyStr = key.toString();
-		final String json = gson.toJson(value);
+		final String json = toJson(value);
 		return apiClient.put(cache, keyStr, json, version);
 	}	
 	
@@ -105,13 +97,11 @@ public class CacheContext {
 		apiClient.flush(cache);
 	}
 	
-	private Object output(final String json, final Class<?> clazz) {
-		Class<?> outputClass = (clazz != null? clazz : defaultClass);
-		
-		if (outputClass == null) {
-			return json;
-		}
-		
-		return gson.fromJson(json, outputClass);
+	protected String toJson(final T value) {
+		return gson.toJson(value);
+	}
+	
+	protected T fromJson(final String json) {
+		return gson.fromJson(json, defaultClass);
 	}
 }

@@ -17,14 +17,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package net.uiqui.oblivion.client.api;
+package net.uiqui.oblivion.client;
 
-public class Value {
+import java.io.Serializable;
+
+public class Value<T> implements Serializable {
+	private static final long serialVersionUID = -5104244319327255679L;
+
 	private long version = 0;
-	private String content = null;
-	
-	public Value(final String content, final long version) {
-		this.content = content;
+	private T value = null;
+
+	protected Value(final T value, final long version) {
+		this.value = value;
 		this.version = version;
 	}
 
@@ -32,15 +36,12 @@ public class Value {
 		return version;
 	}
 
-	public void setVersion(long version) {
-		this.version = version;
+	public T getValue() {
+		return value;
 	}
 
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
+	@Override
+	public String toString() {
+		return "Value[version=" + version + ", value=" + value + "]";
 	}
 }

@@ -17,31 +17,24 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package net.uiqui.oblivion.client;
+package net.uiqui.oblivion.client.impl;
 
-import java.io.Serializable;
+import net.uiqui.oblivion.client.CacheContext;
+import net.uiqui.oblivion.client.api.APIClient;
 
-public class GetResponse implements Serializable {
-	private static final long serialVersionUID = -5104244319327255679L;
+public class JSONCacheContext extends CacheContext<String> {
 
-	private long version = 0;
-	private Object value = null;
-
-	protected GetResponse(final Object value, final long version) {
-		this.value = value;
-		this.version = version;
+	public JSONCacheContext(String cache, APIClient apiClient) {
+		super(cache, apiClient, String.class);
 	}
 
-	public long getVersion() {
-		return version;
-	}
-
-	public Object getValue() {
+	@Override
+	protected String toJson(String value) {
 		return value;
 	}
 
 	@Override
-	public String toString() {
-		return "GetResponse [version=" + version + ", value=" + value + "]";
+	protected String fromJson(String json) {
+		return json;
 	}
 }
