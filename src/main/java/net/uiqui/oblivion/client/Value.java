@@ -21,27 +21,51 @@ package net.uiqui.oblivion.client;
 
 import java.io.Serializable;
 
+/**
+ * The Class Value.
+ *
+ * @param <T> the generic type
+ */
 public class Value<T> implements Serializable {
 	private static final long serialVersionUID = -5104244319327255679L;
 
 	private long version = 0;
 	private T value = null;
 
+	/**
+	 * Instantiates a new value.
+	 *
+	 * @param value the value
+	 * @param version the version
+	 */
 	protected Value(final T value, final long version) {
 		this.value = value;
 		this.version = version;
 	}
 
+	/**
+	 * Gets the version.
+	 *
+	 * @return the version
+	 */
 	public long getVersion() {
 		return version;
 	}
 
+	/**
+	 * Gets the value.
+	 *
+	 * @return the value
+	 */
 	public T getValue() {
 		return value;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
-		return "Value[version=" + version + ", value=" + value + "]";
+		return "Value[value=" + value + ", version=" + version + "]";
 	}
 }

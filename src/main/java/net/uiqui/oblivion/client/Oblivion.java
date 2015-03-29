@@ -26,6 +26,9 @@ import net.uiqui.oblivion.client.api.APIClient;
 import net.uiqui.oblivion.client.api.error.CacheException;
 import net.uiqui.oblivion.client.impl.JSONCacheContext;
 
+/**
+ * Oblivion REST API client main class.
+ */
 public class Oblivion {
 	private APIClient apiClient = null;
 	
@@ -33,37 +36,87 @@ public class Oblivion {
 		this.apiClient = new APIClient(builder.server, builder.port);
 	}
 	
+	/**
+	 * Create a cache context without automatic JSON<->Object conversion.
+	 *
+	 * @param cache the cache name
+	 * @return the cache context
+	 */
 	public CacheContext<String> newCacheContext(final String cache) {
 		return new JSONCacheContext(cache, apiClient);
 	}
 	
+	/**
+	 * Create a cache context with automatic JSON<->Object conversion.
+	 *
+	 * @param <X> the generic type
+	 * @param cache the cache name
+	 * @param clazz the clazz
+	 * @return the cache context
+	 */
 	public <X> CacheContext<X> newCacheContext(final String cache, final Class<X> clazz) {
 		return new CacheContext<X>(cache, apiClient, clazz);
 	}
 	
+	/**
+	 * Caches.
+	 *
+	 * @return the list
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws CacheException the cache exception
+	 */
 	public List<String> caches() throws IOException, CacheException {
 		return apiClient.caches();
 	}
 	
+	/**
+	 * The Class Builder.
+	 */
 	public static class Builder {
+		
+		/** The server. */
 		private String server = "localhost";
+		
+		/** The port. */
 		private int port = 12522; 
 		
+		/**
+		 * Server.
+		 *
+		 * @param server the server
+		 * @return the builder
+		 */
 		public Builder server(final String server) {
 			this.server = server;
 			return this;
 		}
 		
+		/**
+		 * Port.
+		 *
+		 * @param port the port
+		 * @return the builder
+		 */
 		public Builder port(final int port) {
 			this.port = port;
 			return this;
 		}
 		
+		/**
+		 * Builds the.
+		 *
+		 * @return the oblivion
+		 */
 		public Oblivion build() {
 			return new Oblivion(this);
 		}
 	}
 	
+	/**
+	 * Builder.
+	 *
+	 * @return the builder
+	 */
 	public static Builder builder() {
 		return new Builder();
 	}

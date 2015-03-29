@@ -19,11 +19,11 @@
  */
 package net.uiqui.oblivion.client.api;
 
-public class GetResponse {
+public class Response {
 	private long version = 0;
 	private String content = null;
 	
-	public GetResponse(final String content, final long version) {
+	public Response(final String content, final long version) {
 		this.content = content;
 		this.version = version;
 	}
