@@ -22,6 +22,8 @@ package net.uiqui.oblivion.client.api.model;
 public class Node {
 	private String node = null;
 	private boolean online = true;
+	private String server = null;
+	private int port = 0;
 
 	public String getNode() {
 		return node;
@@ -37,5 +39,21 @@ public class Node {
 
 	public void setOnline(boolean online) {
 		this.online = online;
+	}
+
+	public String getServer() {
+		return server;
+	}
+
+	public void setServer(String server) {
+		this.server = server;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
 	}
 }

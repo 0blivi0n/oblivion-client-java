@@ -19,29 +19,20 @@
  */
 package net.uiqui.oblivion.client.api.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class Nodes {
-	private List<Node> nodes = null;
-
-	public List<Node> getNodes() {
-		return nodes;
+public class Server {
+	private String server = null;
+	private int port = 0;
+	
+	public Server(final String server, final int port) {
+		this.server = server;
+		this.port = port;
 	}
 
-	public void setNodes(List<Node> nodes) {
-		this.nodes = nodes;
+	public String getServer() {
+		return server;
 	}
 
-	public List<Server> getOnlineNodes() {
-		List<Server> ret = new ArrayList<Server>();
-		
-		for (Node node : nodes) {
-			if (node.isOnline()) {
-				ret.add(new Server(node.getServer(), node.getPort()));
-			}
-		}
-		
-		return ret;
+	public int getPort() {
+		return port;
 	}
 }

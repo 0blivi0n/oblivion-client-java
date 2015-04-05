@@ -33,7 +33,7 @@ public class Oblivion {
 	private APIClient apiClient = null;
 	
 	private Oblivion(final Builder builder) {
-		this.apiClient = new APIClient(builder.server, builder.port);
+		this.apiClient = new APIClient(builder.server, builder.port, builder.refreshInterval);
 	}
 	
 	/**
@@ -73,12 +73,9 @@ public class Oblivion {
 	 * The Class Builder.
 	 */
 	public static class Builder {
-		
-		/** The server. */
 		private String server = "localhost";
-		
-		/** The port. */
 		private int port = 12522; 
+		private int refreshInterval = 60000;
 		
 		/**
 		 * Server.
@@ -101,6 +98,17 @@ public class Oblivion {
 			this.port = port;
 			return this;
 		}
+		
+		/**
+		 * RefreshInterval.
+		 *
+		 * @param refreshInterval the refreshInterval
+		 * @return the builder
+		 */
+		public Builder refreshInterval(final int refreshInterval) {
+			this.refreshInterval = refreshInterval;
+			return this;
+		}		
 		
 		/**
 		 * Builds the.

@@ -20,6 +20,10 @@
 package net.uiqui.oblivion.client.rest;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.concurrent.TimeUnit;
+
+import net.uiqui.oblivion.client.api.Cluster;
 
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
@@ -32,11 +36,17 @@ public class RestClient {
 
 	private OkHttpClient client = null;
 
-	public RestClient() {
+	public RestClient(final Cluster cluster) {
 		client = new OkHttpClient();
+		
+		client.setConnectTimeout(5, TimeUnit.SECONDS);
+	    client.setWriteTimeout(5, TimeUnit.SECONDS);
+	    client.setReadTimeout(5, TimeUnit.SECONDS);
+	    
+		client.interceptors().add(new RetryHandler(cluster));
 	}
 
-	public RestOutput put(final String url, final String json) throws IOException {
+	public RestOutput put(final URL url, final String json) throws IOException {
 		RequestBody body = RequestBody.create(JSON, json);
 
 		Request request = new Request.Builder().url(url).put(body).build();
@@ -46,7 +56,7 @@ public class RestClient {
 		return RestOutput.parse(response);
 	}
 
-	public RestOutput post(final String url, final String json) throws IOException {
+	public RestOutput post(final URL url, final String json) throws IOException {
 		RequestBody body = RequestBody.create(JSON, json);
 
 		Request request = new Request.Builder().url(url).post(body).build();
@@ -56,7 +66,7 @@ public class RestClient {
 		return RestOutput.parse(response);
 	}
 
-	public RestOutput get(final String url) throws IOException {
+	public RestOutput get(final URL url) throws IOException {
 		Request request = new Request.Builder().url(url).build();
 
 		Response response = client.newCall(request).execute();
@@ -64,7 +74,7 @@ public class RestClient {
 		return RestOutput.parse(response);
 	}
 	
-	public RestOutput delete(final String url) throws IOException {
+	public RestOutput delete(final URL url) throws IOException {
 		Request request = new Request.Builder().url(url).delete().build();
 
 		Response response = client.newCall(request).execute();
@@ -72,7 +82,7 @@ public class RestClient {
 		return RestOutput.parse(response);
 	}	
 	
-	public RestOutput head(final String url) throws IOException {
+	public RestOutput head(final URL url) throws IOException {
 		Request request = new Request.Builder().url(url).head().build();
 
 		Response response = client.newCall(request).execute();

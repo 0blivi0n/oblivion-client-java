@@ -20,6 +20,7 @@
 package net.uiqui.oblivion.client.api;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 import net.uiqui.oblivion.client.api.error.CacheException;
@@ -27,6 +28,7 @@ import net.uiqui.oblivion.client.api.model.Caches;
 import net.uiqui.oblivion.client.api.model.Keys;
 import net.uiqui.oblivion.client.api.model.Nodes;
 import net.uiqui.oblivion.client.api.model.Reason;
+import net.uiqui.oblivion.client.api.model.Server;
 import net.uiqui.oblivion.client.api.util.KeyEncoder;
 import net.uiqui.oblivion.client.api.util.URLBuilder;
 import net.uiqui.oblivion.client.rest.RestClient;
@@ -46,19 +48,18 @@ public class APIClient {
 	private static final URLBuilder GET_CACHE_LIST = new URLBuilder("http://%s:%s/api/caches");
 	private static final URLBuilder GET_NODE_LIST = new URLBuilder("http://%s:%s/api/nodes");
 
-	private final RestClient client = new RestClient();
 	private final Gson gson = new Gson();
+	private Cluster cluster = null;
+	private RestClient client = null;
 
-	private String server = null;
-	private int port = 0;
-
-	public APIClient(final String server, final int port) {
-		this.server = server;
-		this.port = port;
+	public APIClient(final String server, final int port, final int refreshInterval) {
+		this.cluster = new Cluster(this, server, port, refreshInterval);
+		this.client = new RestClient(cluster);
 	}
 
 	public List<String> caches() throws IOException, CacheException {
-		final String url = GET_CACHE_LIST.build(server, port);
+		final Server server = cluster.server();
+		final URL url = GET_CACHE_LIST.build(server.getServer(), server.getPort());
 		final RestOutput output = client.get(url);
 
 		if (output.getStatus() == 200) {
@@ -70,21 +71,9 @@ public class APIClient {
 		}
 	}
 
-	public List<String> nodes() throws IOException, CacheException {
-		final String url = GET_NODE_LIST.build(server, port);
-		final RestOutput output = client.get(url);
-
-		if (output.getStatus() == 200) {
-			final Nodes nodes = gson.fromJson(output.getJson(), Nodes.class);
-			return nodes.getOnlineNodes();
-		} else {
-			final Reason reason = gson.fromJson(output.getJson(), Reason.class);
-			throw new CacheException(reason);
-		}
-	}
-
 	public void flush(final String cache) throws IOException, CacheException {
-		final String url = DELETE_ALL_KEYS.build(server, port, cache);
+		final Server server = cluster.server();
+		final URL url = DELETE_ALL_KEYS.build(server.getServer(), server.getPort(), cache);
 		final RestOutput output = client.delete(url);
 
 		if (output.getStatus() != 202) {
@@ -94,7 +83,8 @@ public class APIClient {
 	}
 
 	public List<String> keys(final String cache) throws IOException, CacheException {
-		final String url = GET_ALL_KEYS.build(server, port, cache);
+		final Server server = cluster.server();
+		final URL url = GET_ALL_KEYS.build(server.getServer(), server.getPort(), cache);
 		final RestOutput output = client.get(url);
 
 		if (output.getStatus() == 200) {
@@ -108,17 +98,19 @@ public class APIClient {
 
 	public long put(final String cache, final String key, final String value) throws IOException, CacheException {
 		final String keyEncoded = KeyEncoder.encode(key);
-		final String url = PUT_KEY_VALUE.build(server, port, cache, keyEncoded);
+		final Server server = cluster.server();
+		final URL url = PUT_KEY_VALUE.build(server.getServer(), server.getPort(), cache, keyEncoded);
 		return store(url, value);
 	}
 
 	public long put(final String cache, final String key, final String value, long version) throws IOException, CacheException {
 		final String keyEncoded = KeyEncoder.encode(key);
-		final String url = PUT_KEY_VALUE_WITH_VERSION.build(server, port, cache, keyEncoded, version);
+		final Server server = cluster.server();
+		final URL url = PUT_KEY_VALUE_WITH_VERSION.build(server.getServer(), server.getPort(), cache, keyEncoded, version);
 		return store(url, value);
 	}
 
-	private long store(final String url, final String value) throws IOException, CacheException {
+	private long store(final URL url, final String value) throws IOException, CacheException {
 		final RestOutput output = client.put(url, value);
 
 		if (output.getStatus() == 201) {
@@ -131,17 +123,19 @@ public class APIClient {
 
 	public void delete(final String cache, final String key) throws IOException, CacheException {
 		final String keyEncoded = KeyEncoder.encode(key);
-		final String url = DELETE_KEY.build(server, port, cache, keyEncoded);
+		final Server server = cluster.server();
+		final URL url = DELETE_KEY.build(server.getServer(), server.getPort(), cache, keyEncoded);
 		remove(url);
 	}
 
 	public void delete(final String cache, final String key, long version) throws IOException, CacheException {
 		final String keyEncoded = KeyEncoder.encode(key);
-		final String url = DELETE_KEY_WITH_VERSION.build(server, port, cache, keyEncoded, version);
+		final Server server = cluster.server();
+		final URL url = DELETE_KEY_WITH_VERSION.build(server.getServer(), server.getPort(), cache, keyEncoded, version);
 		remove(url);
 	}
 
-	private void remove(final String url) throws IOException, CacheException {
+	private void remove(final URL url) throws IOException, CacheException {
 		final RestOutput output = client.delete(url);
 
 		if (output.getStatus() != 200) {
@@ -152,7 +146,8 @@ public class APIClient {
 
 	public long version(final String cache, final String key) throws IOException, CacheException {
 		final String keyEncoded = KeyEncoder.encode(key);
-		final String url = HEAD_KEY_VERSION.build(server, port, cache, keyEncoded);
+		final Server server = cluster.server();
+		final URL url = HEAD_KEY_VERSION.build(server.getServer(), server.getPort(), cache, keyEncoded);
 		final RestOutput output = client.head(url);
 
 		if (output.getStatus() == 200) {
@@ -165,7 +160,8 @@ public class APIClient {
 
 	public Response get(final String cache, final String key) throws IOException, CacheException {
 		final String keyEncoded = KeyEncoder.encode(key);
-		final String url = GET_KEY_VALUE.build(server, port, cache, keyEncoded);
+		final Server server = cluster.server();
+		final URL url = GET_KEY_VALUE.build(server.getServer(), server.getPort(), cache, keyEncoded);
 		final RestOutput output = client.get(url);
 
 		if (output.getStatus() == 200) {
@@ -177,4 +173,18 @@ public class APIClient {
 			throw new CacheException(reason);
 		}
 	}
+	
+	protected List<Server> nodes() throws IOException, CacheException {
+		final Server server = cluster.server();
+		final URL url = GET_NODE_LIST.build(server.getServer(), server.getPort());
+		final RestOutput output = client.get(url);
+
+		if (output.getStatus() == 200) {
+			final Nodes nodes = gson.fromJson(output.getJson(), Nodes.class);
+			return nodes.getOnlineNodes();
+		} else {
+			final Reason reason = gson.fromJson(output.getJson(), Reason.class);
+			throw new CacheException(reason);
+		}
+	}	
 }
