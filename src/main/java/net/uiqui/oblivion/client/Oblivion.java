@@ -70,6 +70,17 @@ public class Oblivion {
 	}
 	
 	/**
+	 * Version.
+	 *
+	 * @return the string
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws CacheException the cache exception
+	 */
+	public String version() throws IOException, CacheException {
+		return apiClient.systemVersion();
+	}	
+	
+	/**
 	 * The Class Builder.
 	 */
 	public static class Builder {

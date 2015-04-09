@@ -29,6 +29,7 @@ import net.uiqui.oblivion.client.api.model.Keys;
 import net.uiqui.oblivion.client.api.model.Nodes;
 import net.uiqui.oblivion.client.api.model.Reason;
 import net.uiqui.oblivion.client.api.model.Server;
+import net.uiqui.oblivion.client.api.model.SystemInfo;
 import net.uiqui.oblivion.client.api.util.KeyEncoder;
 import net.uiqui.oblivion.client.api.util.URLBuilder;
 import net.uiqui.oblivion.client.rest.RestClient;
@@ -45,8 +46,9 @@ public class APIClient {
 	private static final URLBuilder DELETE_KEY = new URLBuilder("http://%s:%s/api/caches/%s/keys/%s");
 	private static final URLBuilder GET_ALL_KEYS = new URLBuilder("http://%s:%s/api/caches/%s/keys");
 	private static final URLBuilder DELETE_ALL_KEYS = new URLBuilder("http://%s:%s/api/caches/%s/keys");
-	private static final URLBuilder GET_CACHE_LIST = new URLBuilder("http://%s:%s/api/caches");
+	private static final URLBuilder GET_CACHE_LIST = new URLBuilder("http://%s:%s/api/caches?sort=true");
 	private static final URLBuilder GET_NODE_LIST = new URLBuilder("http://%s:%s/api/nodes");
+	private static final URLBuilder GET_SYSTEM = new URLBuilder("http://%s:%s/api/system");
 
 	private final Gson gson = new Gson();
 	private Cluster cluster = null;
@@ -182,6 +184,20 @@ public class APIClient {
 		if (output.getStatus() == 200) {
 			final Nodes nodes = gson.fromJson(output.getJson(), Nodes.class);
 			return nodes.getOnlineNodes();
+		} else {
+			final Reason reason = gson.fromJson(output.getJson(), Reason.class);
+			throw new CacheException(reason);
+		}
+	}	
+	
+	public String systemVersion() throws IOException, CacheException {
+		final Server server = cluster.server();
+		final URL url = GET_SYSTEM.build(server.getServer(), server.getPort());
+		final RestOutput output = client.get(url);
+
+		if (output.getStatus() == 200) {
+			final SystemInfo system = gson.fromJson(output.getJson(), SystemInfo.class);
+			return system.getVersion();
 		} else {
 			final Reason reason = gson.fromJson(output.getJson(), Reason.class);
 			throw new CacheException(reason);

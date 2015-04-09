@@ -24,6 +24,7 @@ public class Node {
 	private boolean online = true;
 	private String server = null;
 	private int port = 0;
+	private int broadcast = 0;
 
 	public String getNode() {
 		return node;
@@ -55,5 +56,13 @@ public class Node {
 
 	public void setPort(int port) {
 		this.port = port;
+	}
+
+	public int getBroadcast() {
+		return broadcast;
+	}
+
+	public void setBroadcast(int broadcast) {
+		this.broadcast = broadcast;
 	}
 }
