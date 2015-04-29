@@ -181,6 +181,17 @@ public class CacheContext<T> {
 	}
 	
 	/**
+	 * Size.
+	 *
+	 * @return the long
+	 * @throws IOException Signals that an I/O exception has occurred.
+	 * @throws CacheException the cache exception
+	 */
+	public long size() throws IOException, CacheException {
+		return apiClient.size(cache);
+	}
+	
+	/**
 	 * To json.
 	 *
 	 * @param value the value

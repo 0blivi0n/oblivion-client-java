@@ -44,7 +44,8 @@ public class APIClient {
 	private static final URLBuilder HEAD_KEY_VERSION = new URLBuilder("http://%s:%s/api/caches/%s/keys/%s");
 	private static final URLBuilder DELETE_KEY_WITH_VERSION = new URLBuilder("http://%s:%s/api/caches/%s/keys/%s?version=%s");
 	private static final URLBuilder DELETE_KEY = new URLBuilder("http://%s:%s/api/caches/%s/keys/%s");
-	private static final URLBuilder GET_ALL_KEYS = new URLBuilder("http://%s:%s/api/caches/%s/keys");
+	private static final URLBuilder GET_ALL_KEYS = new URLBuilder("http://%s:%s/api/caches/%s/keys?list=true");
+	private static final URLBuilder GET_CACHE_SIZE = new URLBuilder("http://%s:%s/api/caches/%s/keys");
 	private static final URLBuilder DELETE_ALL_KEYS = new URLBuilder("http://%s:%s/api/caches/%s/keys");
 	private static final URLBuilder GET_CACHE_LIST = new URLBuilder("http://%s:%s/api/caches?sort=true");
 	private static final URLBuilder GET_NODE_LIST = new URLBuilder("http://%s:%s/api/nodes");
@@ -83,6 +84,19 @@ public class APIClient {
 			throw new CacheException(reason);
 		}
 	}
+	
+	public long size(final String cache) throws IOException, CacheException {
+		final Server server = cluster.server();
+		final URL url = GET_CACHE_SIZE.build(server.getServer(), server.getPort(), cache);
+		final RestOutput output = client.get(url);
+
+		if (output.getStatus() == 200) {
+			return gson.fromJson(output.getJson(), Long.class);
+		} else {
+			final Reason reason = gson.fromJson(output.getJson(), Reason.class);
+			throw new CacheException(reason);
+		}
+	}	
 
 	public List<String> keys(final String cache) throws IOException, CacheException {
 		final Server server = cluster.server();
