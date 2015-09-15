@@ -37,7 +37,7 @@ public class Oblivion {
 	}
 	
 	/**
-	 * Create a cache context without automatic JSON<->Object conversion.
+	 * Create a cache context without automatic JSON&lt;-&gt;Object conversion.
 	 *
 	 * @param cache the cache name
 	 * @return the cache context
@@ -47,7 +47,7 @@ public class Oblivion {
 	}
 	
 	/**
-	 * Create a cache context with automatic JSON<->Object conversion.
+	 * Create a cache context with automatic JSON&lt;-&gt;Object conversion.
 	 *
 	 * @param <X> the generic type
 	 * @param cache the cache name
