@@ -59,22 +59,22 @@ public class Oblivion {
 	}
 	
 	/**
-	 * Caches.
+	 * Available caches.
 	 *
-	 * @return the list
+	 * @return the cache list
 	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws CacheException the cache exception
+	 * @throws CacheException Signals that an cache specific exception has occurred.
 	 */
 	public List<String> caches() throws IOException, CacheException {
 		return apiClient.caches();
 	}
 	
 	/**
-	 * Version.
+	 * Oblivion version.
 	 *
-	 * @return the string
+	 * @return the oblivion version
 	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws CacheException the cache exception
+	 * @throws CacheException Signals that an cache specific exception has occurred.
 	 */
 	public String version() throws IOException, CacheException {
 		return apiClient.systemVersion();
@@ -89,7 +89,7 @@ public class Oblivion {
 		private int refreshInterval = 60000;
 		
 		/**
-		 * Server.
+		 * Oblivion server ip/name.
 		 *
 		 * @param server the server
 		 * @return the builder
@@ -100,7 +100,7 @@ public class Oblivion {
 		}
 		
 		/**
-		 * Port.
+		 * Oblivion server port.
 		 *
 		 * @param port the port
 		 * @return the builder
@@ -111,9 +111,9 @@ public class Oblivion {
 		}
 		
 		/**
-		 * RefreshInterval.
+		 * Refresh interval.
 		 *
-		 * @param refreshInterval the refreshInterval
+		 * @param refreshInterval the refresh interval
 		 * @return the builder
 		 */
 		public Builder refreshInterval(final int refreshInterval) {
@@ -122,7 +122,7 @@ public class Oblivion {
 		}		
 		
 		/**
-		 * Builds the.
+		 * Builds an Oblivion instance.
 		 *
 		 * @return the oblivion
 		 */
@@ -132,7 +132,7 @@ public class Oblivion {
 	}
 	
 	/**
-	 * Builder.
+	 * Create a builder instance.
 	 *
 	 * @return the builder
 	 */

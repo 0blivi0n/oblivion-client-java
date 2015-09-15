@@ -42,7 +42,7 @@ public class CacheContext<T> {
 	/**
 	 * Instantiates a new cache context.
 	 *
-	 * @param cache the cache
+	 * @param cache the cache name
 	 * @param apiClient the api client
 	 * @param clazz the clazz
 	 */
@@ -53,12 +53,12 @@ public class CacheContext<T> {
 	}
 	
 	/**
-	 * Version.
+	 * Key version.
 	 *
 	 * @param key the key
-	 * @return the long
+	 * @return the version
 	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws CacheException the cache exception
+	 * @throws CacheException Signals that an cache specific exception has occurred.
 	 */
 	public long version(final Object key) throws IOException, CacheException {
 		final String keyStr = key.toString();
@@ -66,12 +66,12 @@ public class CacheContext<T> {
 	}		
 	
 	/**
-	 * Gets the.
+	 * Gets the value assigned to the key.
 	 *
 	 * @param key the key
-	 * @return the t
+	 * @return the value
 	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws CacheException the cache exception
+	 * @throws CacheException Signals that an cache specific exception has occurred.
 	 */
 	public T get(final Object key) throws IOException, CacheException {
 		final String keyStr = key.toString();
@@ -85,12 +85,12 @@ public class CacheContext<T> {
 	}	
 	
 	/**
-	 * Gets the value.
+	 * Gets the value object (value and version).
 	 *
 	 * @param key the key
 	 * @return the value
 	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws CacheException the cache exception
+	 * @throws CacheException Signals that an cache specific exception has occurred.
 	 */
 	public Value<T> getValue(final Object key) throws IOException, CacheException {
 		final String keyStr = key.toString();
@@ -104,13 +104,13 @@ public class CacheContext<T> {
 	}	
 	
 	/**
-	 * Put.
+	 * Stores a value.
 	 *
 	 * @param key the key
 	 * @param value the value
-	 * @return the long
+	 * @return the value version
 	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws CacheException the cache exception
+	 * @throws CacheException Signals that an cache specific exception has occurred.
 	 */
 	public long put(final Object key, final T value) throws IOException, CacheException {
 		final String keyStr = key.toString();
@@ -119,14 +119,14 @@ public class CacheContext<T> {
 	}	
 	
 	/**
-	 * Put.
+	 * Stores a value only if the the version wasn't changed.
 	 *
 	 * @param key the key
 	 * @param value the value
 	 * @param version the version
-	 * @return the long
+	 * @return the new version
 	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws CacheException the cache exception
+	 * @throws CacheException Signals that an cache specific exception has occurred.
 	 */
 	public long put(final Object key, final T value, long version) throws IOException, CacheException {
 		final String keyStr = key.toString();
@@ -135,11 +135,11 @@ public class CacheContext<T> {
 	}	
 	
 	/**
-	 * Delete.
+	 * Delete a key.
 	 *
 	 * @param key the key
 	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws CacheException the cache exception
+	 * @throws CacheException Signals that an cache specific exception has occurred.
 	 */
 	public void delete(final Object key) throws IOException, CacheException {
 		final String keyStr = key.toString();
@@ -147,12 +147,12 @@ public class CacheContext<T> {
 	}	
 	
 	/**
-	 * Delete.
+	 * Delete a key only if the the version wasn't changed.
 	 *
 	 * @param key the key
 	 * @param version the version
 	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws CacheException the cache exception
+	 * @throws CacheException Signals that an cache specific exception has occurred.
 	 */
 	public void delete(final Object key, long version) throws IOException, CacheException {
 		final String keyStr = key.toString();
@@ -160,53 +160,41 @@ public class CacheContext<T> {
 	}	
 	
 	/**
-	 * Keys.
+	 * All keys.
 	 *
-	 * @return the list
+	 * @return the key list
 	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws CacheException the cache exception
+	 * @throws CacheException Signals that an cache specific exception has occurred.
 	 */
 	public List<String> keys() throws IOException, CacheException {
 		return apiClient.keys(cache);
 	}
 	
 	/**
-	 * Flush.
+	 * Flush cache.
 	 *
 	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws CacheException the cache exception
+	 * @throws CacheException Signals that an cache specific exception has occurred.
 	 */
 	public void flush() throws IOException, CacheException {
 		apiClient.flush(cache);
 	}
 	
 	/**
-	 * Size.
+	 * Return the number of keys.
 	 *
-	 * @return the long
+	 * @return the cache size
 	 * @throws IOException Signals that an I/O exception has occurred.
-	 * @throws CacheException the cache exception
+	 * @throws CacheException Signals that an cache specific exception has occurred.
 	 */
 	public long size() throws IOException, CacheException {
 		return apiClient.size(cache);
 	}
 	
-	/**
-	 * To json.
-	 *
-	 * @param value the value
-	 * @return the string
-	 */
 	protected String toJson(final T value) {
 		return gson.toJson(value);
 	}
-	
-	/**
-	 * From json.
-	 *
-	 * @param json the json
-	 * @return the t
-	 */
+
 	protected T fromJson(final String json) {
 		return gson.fromJson(json, type);
 	}
