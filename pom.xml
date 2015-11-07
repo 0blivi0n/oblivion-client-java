@@ -5,7 +5,7 @@
 	<groupId>org.oblivion-cache</groupId>
 	<artifactId>oblivion-rest-client</artifactId>
 	<packaging>jar</packaging>
-	<version>0.5.1</version>
+	<version>0.5.2</version>
 	<name>0blivi0n-REST-Client</name>
 	<description>0blivi0n REST API client for JAVA applications</description>
 	<url>https://github.com/0blivi0n/oblivion-rest-client-java</url>

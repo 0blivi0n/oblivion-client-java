@@ -38,7 +38,7 @@ public class Nodes {
 		
 		for (Node node : nodes) {
 			if (node.isOnline()) {
-				ret.add(new Server(node.getServer(), node.getPort()));
+				ret.add(new Server(node.getServer(), node.getHttp()));
 			}
 		}
 		

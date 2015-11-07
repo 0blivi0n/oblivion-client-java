@@ -25,6 +25,7 @@ public class Node {
 	private String server = null;
 	private int port = 0;
 	private int broadcast = 0;
+	private int http = 0;
 
 	public String getNode() {
 		return node;
@@ -64,5 +65,13 @@ public class Node {
 
 	public void setBroadcast(int broadcast) {
 		this.broadcast = broadcast;
+	}
+
+	public int getHttp() {
+		return http;
+	}
+
+	public void setHttp(int http) {
+		this.http = http;
 	}
 }
